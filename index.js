@@ -58,8 +58,7 @@ module.exports = function cabinet(options) {
 
   const ext = path.extname(filename);
   debug('which has the extension: ' + ext);
-
-  let resolver = defaultLookups[type || ext];
+  let resolver = defaultLookups[type ? `.${type}` : ext];
 
   if (!resolver) {
     // 没有指定处理函数，使用通用的处理函数--css在这里处理
