@@ -75,7 +75,7 @@ module.exports = function cabinet(options) {
   debug(`found a resolver for ${ext}`);
 
   options.dependency = partial;
-  const result = resolver(options) || resolveDependencyPath(options;
+  const result = resolver(options) || resolveDependencyPath(options);
 
   debug(`resolved path for ${partial}: ${result}`);
   return result;
