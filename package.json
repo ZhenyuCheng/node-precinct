@@ -1,5 +1,5 @@
 {
-  "name": "filing-cabinet",
+  "name": "@zhenyu925/filing-cabinet",
   "version": "2.5.1",
   "description": "Find files based on partial paths",
   "main": "index.js",

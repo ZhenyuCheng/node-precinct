@@ -33,11 +33,11 @@ const defaultLookups = {
   // Less and Sass imports are very similar
   '.less': sassLookup
 };
-
+// TODO：增加对.vue后缀的支持
 /**
  * @param {Object} options
- * @param {String} options.partial The dependency being looked up
- * @param {String} options.filename The file that contains the dependency being looked up
+ * @param {String} options.partial The dependency being looked up，需要处理的依赖
+ * @param {String} options.filename The file that contains the dependency being looked up // 包含这个要处理的依赖的文件
  * @param {String|Object} [options.config] Path to a requirejs config
  * @param {String} [options.configPath] For AMD resolution, if the config is an object, this represents the location of the config file.
  * @param {Object} [options.nodeModulesConfig] Config for overriding the entry point defined in a package json file
@@ -51,6 +51,7 @@ module.exports = function cabinet(options) {
   const {
     partial,
     filename,
+    type
   } = options;
 
   debug('Given filename: ' + filename);
@@ -58,9 +59,10 @@ module.exports = function cabinet(options) {
   const ext = path.extname(filename);
   debug('which has the extension: ' + ext);
 
-  let resolver = defaultLookups[ext];
+  let resolver = defaultLookups[type || ext];
 
   if (!resolver) {
+    // 没有指定处理函数，使用通用的处理函数--css在这里处理
     debug('using generic resolver');
     if (!resolveDependencyPath) {
       resolveDependencyPath = require('resolve-dependency-path');
@@ -178,6 +180,7 @@ function jsLookup({dependency, filename, directory, config, webpackConfig, confi
   }
 }
 
+// 需要试一试Vue中的TS部分是否能够正常解析
 function tsLookup({dependency, filename, tsConfig, noTypeDefinitions}) {
   debug('performing a typescript lookup');
 
