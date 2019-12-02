@@ -59,13 +59,15 @@ module.exports = function cabinet(options) {
   const ext = path.extname(filename);
   debug('which has the extension: ' + ext);
   let resolver = defaultLookups[type ? `.${type}` : ext];
+  // 如果partial引用的是一个.vue结尾的文件，那么会找不到，所以需要通用解决方案来寻找
 
+  if (!resolveDependencyPath) {
+    resolveDependencyPath = require('resolve-dependency-path');
+  }
   if (!resolver) {
     // 没有指定处理函数，使用通用的处理函数--css在这里处理
     debug('using generic resolver');
-    if (!resolveDependencyPath) {
-      resolveDependencyPath = require('resolve-dependency-path');
-    }
+
 
     resolver = resolveDependencyPath;
   }
@@ -73,7 +75,7 @@ module.exports = function cabinet(options) {
   debug(`found a resolver for ${ext}`);
 
   options.dependency = partial;
-  const result = resolver(options);
+  const result = resolver(options) || resolveDependencyPath(options;
 
   debug(`resolved path for ${partial}: ${result}`);
   return result;
