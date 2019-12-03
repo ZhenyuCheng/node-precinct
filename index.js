@@ -60,15 +60,12 @@ module.exports = function cabinet(options) {
   debug('which has the extension: ' + ext);
   let resolver = defaultLookups[type ? `.${type}` : ext];
   // 如果partial引用的是一个.vue结尾的文件，那么会找不到，所以需要通用解决方案来寻找
-
   if (!resolveDependencyPath) {
     resolveDependencyPath = require('resolve-dependency-path');
   }
   if (!resolver) {
     // 没有指定处理函数，使用通用的处理函数--css在这里处理
     debug('using generic resolver');
-
-
     resolver = resolveDependencyPath;
   }
 
@@ -181,7 +178,6 @@ function jsLookup({dependency, filename, directory, config, webpackConfig, confi
   }
 }
 
-// 需要试一试Vue中的TS部分是否能够正常解析
 function tsLookup({dependency, filename, tsConfig, noTypeDefinitions}) {
   debug('performing a typescript lookup');
 
@@ -232,9 +228,10 @@ function tsLookup({dependency, filename, tsConfig, noTypeDefinitions}) {
     }
   } else {
     const suffix = '.d.ts';
-    const lookUpLocations = namedModule.failedLookupLocations
+    let lookUpLocations = namedModule.failedLookupLocations
       .filter((string) => string.endsWith(suffix))
       .map((string) => string.substr(0, string.length - suffix.length));
+      lookUpLocations = [lookUpLocations, ...lookUpLocations.map(ele => `${ele}.vue`) ]
 
     result = lookUpLocations.find(ts.sys.fileExists) || '';
   }
@@ -276,7 +273,7 @@ function commonJSLookup({dependency, filename, directory, nodeModulesConfig}) {
 
   try {
     result = resolve.sync(dependency, {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
       basedir: directory,
       packageFilter: nodeModulesConfig && nodeModulesConfig.entry ? packageFilter : undefined,
       // Add fileDir to resolve index.js files in that dir
