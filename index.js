@@ -231,7 +231,7 @@ function tsLookup({dependency, filename, tsConfig, noTypeDefinitions}) {
     let lookUpLocations = namedModule.failedLookupLocations
       .filter((string) => string.endsWith(suffix))
       .map((string) => string.substr(0, string.length - suffix.length));
-      lookUpLocations = [lookUpLocations, ...lookUpLocations.map(ele => `${ele}.vue`) ]
+      lookUpLocations = [...lookUpLocations, ...lookUpLocations.map(ele => `${ele}.vue`) ]
 
     result = lookUpLocations.find(ts.sys.fileExists) || '';
   }
